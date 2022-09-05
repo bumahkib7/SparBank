@@ -2,25 +2,29 @@ package org.codewarrior.sparbank.config;
 
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
+import com.mongodb.ServerApi;
+import com.mongodb.ServerApiVersion;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoDatabase;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mongodb.core.MongoTemplate;
 
 @Configuration
 public class SimpleMongoConfig {
  
     @Bean
     public MongoClient mongo() {
-        ConnectionString connectionString = new ConnectionString("mongodb://localhost:27017/test");
-        MongoClientSettings mongoClientSettings = MongoClientSettings.builder()
-          .applyConnectionString(connectionString)
-          .build();
-        
-        return MongoClients.create(mongoClientSettings);
+        ConnectionString connectionString = new ConnectionString("mongodb+srv://Bbmk12:<pass>@sparbank.5u5ci.mongodb.net/?retryWrites=true&w=majority&MaxTimeMS=500000");
+        MongoClientSettings settings = MongoClientSettings.builder()
+                .applyConnectionString(connectionString)
+                .serverApi(ServerApi.builder()
+                        .version(ServerApiVersion.V1)
+                        .build())
+                .build();
+        MongoClient mongoClient = MongoClients.create(settings);
+        MongoDatabase database = mongoClient.getDatabase("test");
+        return mongoClient;
     }
 
-    @Bean
-    public MongoTemplate mongoTemplate() throws Exception {
-        return new MongoTemplate(mongo(), "test");
-    }
 }
